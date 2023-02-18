@@ -4,6 +4,9 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { HelmetProvider } from "react-helmet-async";
+import { setToken } from "./lib/api/client";
+
+setToken();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

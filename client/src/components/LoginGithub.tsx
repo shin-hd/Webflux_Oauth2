@@ -1,5 +1,5 @@
 import { Link } from "@mui/material";
-import { githubSrcWithClientId } from "utils/login/githubUtils";
+import { githubSrcWithClientId } from "lib/login/githubUtils";
 
 const LoginGithub = () => {
   return (

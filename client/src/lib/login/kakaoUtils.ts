@@ -1,4 +1,5 @@
 import { loginWithToken } from "lib/api/auth";
+import handleResponse from "lib/login/handleResponse";
 
 export const kakaoSrc = "https://developers.kakao.com/sdk/js/kakao.js";
 
@@ -10,7 +11,7 @@ export const loginFormWithKakao = () => {
         //   "token",
         //   (authObj.access_token as string) ?? "none"
         // );
-        loginWithToken("kakao", authObj);
+        loginWithToken("kakao", authObj).then((res) => handleResponse(res));
       }
       console.log(authObj);
       window.localStorage.setItem("token", authObj.access_token);

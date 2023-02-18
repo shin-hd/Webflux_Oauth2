@@ -1,6 +1,6 @@
 import { useScript } from "hooks/useScript";
 import { useEffect } from "react";
-import { naverSrc, initializeNaverLogin } from "utils/login/naverUtils";
+import { naverSrc, initializeNaverLogin } from "lib/login/naverUtils";
 
 const LoginNaver = () => {
   const status = useScript(naverSrc);

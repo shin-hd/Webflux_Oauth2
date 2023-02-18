@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import qs from "qs";
 import { From, loginGithub, loginWithToken } from "lib/api/auth";
+import handleResponse from "lib/login/handleResponse";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -16,20 +17,13 @@ const Home = () => {
     const data = qs.parse(uri);
 
     if (data.access_token) {
-      console.log(data);
-      // window.localStorage.setItem(
-      //   "token",
-      //   (data.access_token as string) ?? "none"
-      // );
       const from: From = (params.from as From) ?? undefined;
-      if (from) loginWithToken(from, data).then((data) => console.log(data));
+      if (from) loginWithToken(from, data).then((res) => handleResponse(res));
       navigate("/");
     }
 
     if (data.code) {
-      console.log(data);
-      // window.localStorage.setItem("token", (data.code as string) ?? "none");
-      loginGithub(data).then((data) => console.log(data));
+      loginGithub(data).then((res) => handleResponse(res));
       navigate("/");
     }
   }, [navigate, params?.from]);

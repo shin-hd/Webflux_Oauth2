@@ -5,7 +5,7 @@ import {
   kakaoSrc,
   initializeKakaoLogin,
   loginFormWithKakao,
-} from "utils/login/kakaoUtils";
+} from "lib/login/kakaoUtils";
 
 const LoginKakao = () => {
   const navigate = useNavigate();

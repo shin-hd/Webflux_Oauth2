@@ -1,5 +1,5 @@
 import { Link } from "@mui/material";
-import { googleSrcWithClientId } from "../utils/login/googleUtils";
+import { googleSrcWithClientId } from "../lib/login/googleUtils";
 
 const LoginGoogle = () => {
   return (

@@ -46,20 +46,26 @@ class AuthServiceImpl(
             it.queryParam("personFields", "emailAddresses,names,photos").build()
         }.accept(MediaType.APPLICATION_JSON)
             .headers {it.setBearerAuth(tokenDto.access_token) }.retrieve()
-            .onStatus({ it.is4xxClientError }) { Mono.error(IllegalArgumentException("Invalid access token received.")) }
-            .onStatus({ it.is5xxServerError }) { Mono.error(RuntimeException("Resource server error.")) }
+            .onStatus({ it.is4xxClientError }) {
+                logger.info("잘못된 액세스 토큰. access_token : ${tokenDto.access_token}")
+                Mono.error(IllegalArgumentException("Invalid access token received."))
+            }
+            .onStatus({ it.is5xxServerError }) {
+                logger.info("리소스 서버 에러.")
+                Mono.error(RuntimeException("Resource server error."))
+            }
             .bodyToMono<GoogleResultDto>()
 
             .flatMap { googleResultDto ->
                 val user = User.fromGoogle(googleResultDto)
                 userRepository.findByOauthIdAndType(googleResultDto.resourceName.split("/").last(), LoginType.GOOGLE)
                     .flatMap {
-                        logger.info("로그인 성공. user: $it")
+                        logger.info("로그인 성공. user : $it")
                         Mono.just(
                             SignInResultDto.from(jwtTokenProvider.createToken(it.id.toString(), it.roles))
                         )
                     }.switchIfEmpty(userRepository.save(user).flatMap {
-                        logger.info("회원 등록 성공. user: $it")
+                        logger.info("회원 등록 성공. user : $it")
                         Mono.just(SignInResultDto.from(jwtTokenProvider.createToken(it.id.toString(), it.roles)))
                     })
             }
@@ -75,8 +81,14 @@ class AuthServiceImpl(
                 fromFormData("client_id", githubClientId).with("client_secret", githubClientSecret)
                     .with("code", codeDto.code)
             ).retrieve()
-            .onStatus({ it.is4xxClientError }) { Mono.error(IllegalArgumentException("Invalid code received.")) }
-            .onStatus({ it.is5xxServerError }) { Mono.error(RuntimeException("Resource server error.")) }
+            .onStatus({ it.is4xxClientError }) {
+                logger.info("잘못된 코드. code : ${codeDto.code}")
+                Mono.error(IllegalArgumentException("Invalid access token received."))
+            }
+            .onStatus({ it.is5xxServerError }) {
+                logger.info("리소스 서버 에러.")
+                Mono.error(RuntimeException("Resource server error."))
+            }
             .bodyToMono<SignInWithTokenDto>()
 
             .flatMap { signInWithTokenDto ->
@@ -85,19 +97,25 @@ class AuthServiceImpl(
                     it.add("Accept", "application/vnd.github+json")
                     it.setBearerAuth(signInWithTokenDto.access_token)
                 }.retrieve()
-                    .onStatus({ it.is4xxClientError }) { Mono.error(IllegalArgumentException("Invalid access token received.")) }
-                    .onStatus({ it.is5xxServerError }) { Mono.error(RuntimeException("Resource server error.")) }
+                    .onStatus({ it.is4xxClientError }) {
+                        logger.info("잘못된 액세스 토큰. access_token : ${signInWithTokenDto.access_token}")
+                        Mono.error(IllegalArgumentException("Invalid access token received."))
+                    }
+                    .onStatus({ it.is5xxServerError }) {
+                        logger.info("리소스 서버 에러.")
+                        Mono.error(RuntimeException("Resource server error."))
+                    }
                     .bodyToMono<GithubResultDto>() }
 
             .flatMap { githubResultDto ->
                 val user = User.fromGithub(githubResultDto)
                 userRepository.findByOauthIdAndType(githubResultDto.id, LoginType.GITHUB).flatMap {
-                    logger.info("로그인 성공. user: $it")
+                    logger.info("로그인 성공. user : $it")
                     Mono.just(
                         SignInResultDto.from(jwtTokenProvider.createToken(it.id.toString(), it.roles))
                     )
                 }.switchIfEmpty(userRepository.save(user).flatMap {
-                    logger.info("회원 등록 성공. user: $it")
+                    logger.info("회원 등록 성공. user : $it")
                     Mono.just(SignInResultDto.from(jwtTokenProvider.createToken(it.id.toString(), it.roles)))
                 })
             }
@@ -109,19 +127,25 @@ class AuthServiceImpl(
         return client.get().accept(MediaType.APPLICATION_JSON).headers {
             it.setBearerAuth(tokenDto.access_token)
         }.retrieve()
-            .onStatus({ it.is4xxClientError }) { Mono.error(IllegalArgumentException("Invalid access token received.")) }
-            .onStatus({ it.is5xxServerError }) { Mono.error(RuntimeException("Resource server error.")) }
+            .onStatus({ it.is4xxClientError }) {
+                logger.info("잘못된 액세스 토큰. access_token : ${tokenDto.access_token}")
+                Mono.error(IllegalArgumentException("Invalid access token received."))
+            }
+            .onStatus({ it.is5xxServerError }) {
+                logger.info("리소스 서버 에러.")
+                Mono.error(RuntimeException("Resource server error."))
+            }
             .bodyToMono<NaverResultDto>()
 
             .flatMap { naverResultDto ->
                 val user = User.fromNaver(naverResultDto.response)
                 userRepository.findByOauthIdAndType(naverResultDto.response.id, LoginType.NAVER).flatMap {
-                    logger.info("로그인 성공. user: $it")
+                    logger.info("로그인 성공. user : $it")
                     Mono.just(
                         SignInResultDto.from(jwtTokenProvider.createToken(it.id.toString(), it.roles))
                     )
                 }.switchIfEmpty(userRepository.save(user).flatMap {
-                    logger.info("회원 등록 성공. user: $it")
+                    logger.info("회원 등록 성공. user : $it")
                     Mono.just(SignInResultDto.from(jwtTokenProvider.createToken(it.id.toString(), it.roles)))
                 })
             }
@@ -133,19 +157,25 @@ class AuthServiceImpl(
         return client.get().accept(MediaType.APPLICATION_JSON).headers {
             it.setBearerAuth(tokenDto.access_token)
         }.retrieve()
-            .onStatus({ it.is4xxClientError }) { Mono.error(IllegalArgumentException("Invalid access token received.")) }
-            .onStatus({ it.is5xxServerError }) { Mono.error(RuntimeException("Resource server error.")) }
+            .onStatus({ it.is4xxClientError }) {
+                logger.info("잘못된 액세스 토큰. access_token : ${tokenDto.access_token}")
+                Mono.error(IllegalArgumentException("Invalid access token received."))
+            }
+            .onStatus({ it.is5xxServerError }) {
+                logger.info("리소스 서버 에러.")
+                Mono.error(RuntimeException("Resource server error."))
+            }
             .bodyToMono<KakaoResultDto>()
 
             .flatMap { kakaoResultDto ->
                 val user = User.fromKakao(kakaoResultDto)
                 userRepository.findByOauthIdAndType(kakaoResultDto.id, LoginType.KAKAO).flatMap {
-                    logger.info("로그인 성공. user: $it")
+                    logger.info("로그인 성공. user : $it")
                     Mono.just(
                         SignInResultDto.from(jwtTokenProvider.createToken(it.id.toString(), it.roles))
                     )
                 }.switchIfEmpty(userRepository.save(user).flatMap {
-                    logger.info("회원 등록 성공. user: $it")
+                    logger.info("회원 등록 성공. user : $it")
                     Mono.just(SignInResultDto.from(jwtTokenProvider.createToken(it.id.toString(), it.roles)))
                 })
             }

@@ -84,7 +84,7 @@ class User(
     }
 
     override fun toString(): String =
-        "id: $id, email: $email, name: $name, type: $type, locked: $locked, roles: $roles, createdDate: ${super.createdDate}, lastModifiedDate: ${super.lastModifiedDate}"
+        "User(id: $id, email: $email, name: $name, type: $type, locked: $locked, roles: $roles, createdDate: ${super.createdDate}, lastModifiedDate: ${super.lastModifiedDate})"
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return this.roles.map { SimpleGrantedAuthority(it) }.toMutableList()

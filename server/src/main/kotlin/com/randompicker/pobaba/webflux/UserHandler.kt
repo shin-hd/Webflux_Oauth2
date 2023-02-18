@@ -41,18 +41,20 @@ class UserHandler(
     }
 
     suspend fun signInGoogle(req: ServerRequest): ServerResponse {
-        val singInWithTokenDto = req.awaitBodyOrNull<SignInWithTokenDto>()
-
-        val signInResultDto = singInWithTokenDto?.let {
+        val signInWithTokenDto = req.awaitBodyOrNull<SignInWithTokenDto>()
+        logger.info("구글 로그인 요청")
+        
+        val signInResultDto = signInWithTokenDto?.let {
             authService.signInGoogle(it).awaitSingle()
         }
-
+        
         return if (signInResultDto == null) badRequest().buildAndAwait()
         else ok().bodyValueAndAwait(signInResultDto)
     }
 
     suspend fun signInGithub(req: ServerRequest): ServerResponse {
         val signInWithCodeDto = req.awaitBodyOrNull<SignInWithCodeDto>()
+        logger.info("깃허브 로그인 요청.")
 
         val signInResultDto = signInWithCodeDto?.let {
             authService.signInGithub(it).awaitSingle()
@@ -64,6 +66,7 @@ class UserHandler(
 
     suspend fun signInNaver(req: ServerRequest): ServerResponse {
         val signInWithTokenDto = req.awaitBodyOrNull<SignInWithTokenDto>()
+        logger.info("네이버 로그인 요청.")
 
         val signInResultDto = signInWithTokenDto?.let {
             authService.signInNaver(it).awaitSingle()
@@ -75,6 +78,7 @@ class UserHandler(
 
     suspend fun signInKakako(req: ServerRequest): ServerResponse {
         val signInWithTokenDto = req.awaitBodyOrNull<SignInWithTokenDto>()
+        logger.info("카카오 로그인 요청.")
 
         val signInResultDto = signInWithTokenDto?.let {
             authService.signInKakao(it).awaitSingle()
