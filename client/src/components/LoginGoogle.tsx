@@ -10,7 +10,7 @@ const LoginGoogle = () => {
             process.env.PUBLIC_URL +
             "/button/google/btn_google_signin_light_normal_web.png"
           }
-          alt=""
+          alt="구글 로그인"
         />
       </Link>
     </div>

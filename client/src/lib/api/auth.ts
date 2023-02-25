@@ -5,7 +5,7 @@ export type From = "google" | "github" | "naver" | "kakao" | undefined;
 const defaultHandler = (error: any) => error.response;
 
 export const loginWithToken = (from: From, { access_token }: any) =>
-  client.post(`/auth/${from}`, { access_token }).catch(defaultHandler);
+  client.post(`/auth/login/${from}`, { access_token }).catch(defaultHandler);
 
 export const loginGithub = ({ code }: any) =>
-  client.post("/auth/github", { code });
+  client.post("/auth/login/github", { code });
