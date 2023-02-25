@@ -28,7 +28,6 @@ class AuthServiceImpl(
     private val webClient: WebClient,
     private val userRepository: UserRepository,
     private val jwtTokenProvider: JwtTokenProvider,
-    @Value("\${spring.security.oauth2.client.registration.google.client-id}") private val googleClientId: String,
     @Value("\${spring.security.oauth2.client.provider.google.user-info-uri}") private val googleUserInfoUri: String,
     @Value("\${spring.security.oauth2.client.registration.github.client-id}") private val githubClientId: String,
     @Value("\${spring.security.oauth2.client.registration.github.client-secret}") private val githubClientSecret: String,

@@ -7,9 +7,9 @@ import LoginGithub from "./../components/LoginGithub";
 const Login = () => {
   return (
     <>
-      <Header title="Login" />
-      <div className="mx-auto h-full w-full max-w-xl my-10">
-        <div className="justify-center space-y-5 flex flex-col items-center">
+      <Header title="Login" back />
+      <div className="absolute left-0 top-16 bottom-0 right-0 bg-slate-100 flex flex-col items-center justify-center -z-10">
+        <div className="grid bg-white rounded-sm shadow-md p-8 space-y-6 place-items-center">
           <LoginGithub />
           <LoginGoogle />
           <LoginNaver />

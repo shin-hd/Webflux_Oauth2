@@ -7,9 +7,10 @@ import { Button } from "@mui/material";
 interface HeaderProps {
   title: string;
   login?: boolean;
+  back?: boolean;
 }
 
-const Header = ({ title, login }: HeaderProps) => {
+const Header = ({ title, login, back }: HeaderProps) => {
   const navigate = useNavigate();
   return (
     <>
@@ -17,7 +18,28 @@ const Header = ({ title, login }: HeaderProps) => {
         <title>{title} | Pobaba</title>
       </Helmet>
       <div className="top-0 w-full flex flex-row shadow-xl h-16 bg-purple-100 text-center z-30">
-        <div className="basis-1/4"></div>
+        <div className="grid basis-1/4 content-center justify-center">
+          {back ? (
+            <button onClick={() => navigate(-1)}>
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 19l-7-7 7-7"
+                ></path>
+              </svg>
+            </button>
+          ) : (
+            <div />
+          )}
+        </div>
         <div className="flex basis-1/2 content-center justify-center">
           <Typography
             className="text-purple-800 hover:cursor-pointer"
@@ -28,7 +50,7 @@ const Header = ({ title, login }: HeaderProps) => {
             {title}
           </Typography>
         </div>
-        <div className="flex basis-1/4 content-center justify-center">
+        <div className="grid basis-1/4 content-center justify-center">
           {login && (
             <Button size="small" onClick={() => navigate("/login")}>
               로그인

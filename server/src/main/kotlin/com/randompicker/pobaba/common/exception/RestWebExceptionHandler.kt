@@ -1,6 +1,5 @@
 package com.randompicker.pobaba.common.exception
 
-import org.apache.http.entity.ContentType
 import org.springframework.boot.configurationprocessor.json.JSONObject
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
