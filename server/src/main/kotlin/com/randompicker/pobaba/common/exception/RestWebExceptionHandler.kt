@@ -17,10 +17,17 @@ class RestWebExceptionHandler: WebExceptionHandler {
 
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
         return when(ex) {
+            is InvalidTokenException -> {
+                exchange.response.statusCode = HttpStatus.UNAUTHORIZED
+                exchange.response.headers.contentType = MediaType.APPLICATION_JSON
+                val bytes = JSONObject(getErrorAttributes(ex, HttpStatus.UNAUTHORIZED)).toString().toByteArray()
+                val buffer = bytes.let { exchange.response.bufferFactory().wrap(it) }
+                exchange.response.writeWith(Flux.just(buffer))
+            }
             is IllegalArgumentException -> {
                 exchange.response.statusCode = HttpStatus.BAD_REQUEST
                 exchange.response.headers.contentType = MediaType.APPLICATION_JSON
-                val bytes = JSONObject(getErrorAttributes(ex)).toString().toByteArray()
+                val bytes = JSONObject(getErrorAttributes(ex, HttpStatus.BAD_REQUEST)).toString().toByteArray()
                 val buffer = bytes.let { exchange.response.bufferFactory().wrap(it) }
                 exchange.response.writeWith(Flux.just(buffer))
             }
@@ -31,9 +38,9 @@ class RestWebExceptionHandler: WebExceptionHandler {
         }
     }
 
-    fun getErrorAttributes(ex: Throwable): MutableMap<String, Any> {
+    fun getErrorAttributes(ex: Throwable, status: HttpStatus): MutableMap<String, Any> {
         return mutableMapOf(
-            Pair("status", HttpStatus.BAD_REQUEST.value()),
+            Pair("status", status.value()),
             Pair("msg", ex.message as Any)
         )
     }

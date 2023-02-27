@@ -2,8 +2,8 @@ package com.randompicker.pobaba.config.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.web.server.SecurityWebFilterChain
 import reactor.core.publisher.Mono
@@ -11,35 +11,40 @@ import reactor.core.publisher.Mono
 @Configuration
 @EnableWebFluxSecurity
 class SecurityConfig(
-    //private val customOAuth2UserService: CustomOAuth2UserService,
+    private val authenticationManager: AuthenticationManager,
+    private val securityContextRepository: SecurityContextRepository
 ) {
 
     @Bean
     fun filterChain(
         httpSecurity: ServerHttpSecurity,
-        jwtTokenProvider: JwtTokenProvider,
     ): SecurityWebFilterChain {
-        httpSecurity.httpBasic().disable()
-
-            .csrf().disable()
-            .formLogin().disable()
+        return httpSecurity
 
             .exceptionHandling()
-            .authenticationEntryPoint { exchange, ex -> Mono.error(ex) }
-            .accessDeniedHandler { exchange, ex -> Mono.error(ex) }
+            .authenticationEntryPoint { exchange, ex ->
+                Mono.fromRunnable {
+                    exchange.response.statusCode = HttpStatus.UNAUTHORIZED
+                }
+            }
+            .accessDeniedHandler { exchange, ex ->
+                Mono.fromRunnable {
+                    exchange.response.statusCode = HttpStatus.FORBIDDEN
+                }
+            }
 
             .and()
+            .csrf().disable()
+            .formLogin().disable()
+            .httpBasic().disable()
+
+            .authenticationManager(authenticationManager)
+            .securityContextRepository(securityContextRepository)
+
             .authorizeExchange()
             .pathMatchers("/api/auth/**").permitAll()
-            .pathMatchers("/api/**").authenticated()
-
-            .and()
-            .addFilterBefore(
-                JwtAuthenticationFilter(jwtTokenProvider),
-                SecurityWebFiltersOrder.AUTHENTICATION
-            )
-
-        return httpSecurity.build()
+            .anyExchange().authenticated()
+            .and().build()
     }
 
 }

@@ -21,7 +21,7 @@ class AuthHandler(
 
     suspend fun signInGoogle(req: ServerRequest): ServerResponse {
         val signInWithTokenDto = req.awaitBodyOrNull<SignInWithTokenDto>()
-        logger.info("구글 로그인 요청")
+        logger.info("구글 로그인 요청.")
         
         val signInResultDto = signInWithTokenDto?.let {
             authService.signInGoogle(it).awaitSingle()

@@ -1,6 +1,7 @@
 package com.randompicker.pobaba.config
 
 import com.randompicker.pobaba.webflux.AuthHandler
+import com.randompicker.pobaba.webflux.UserHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -22,12 +23,12 @@ class RouterConfig: WebFluxConfigurer {
     }
 
     @Bean
-    fun userRouter(authHandler: AuthHandler) = coRouter {
+    fun userRouter(userHandler: UserHandler) = coRouter {
         "/api/users".nest {
-            GET("/me", authHandler::signInGoogle)
-            POST("/github", accept(APPLICATION_JSON), authHandler::signInGithub)
-            POST("/naver", accept(APPLICATION_JSON), authHandler::signInNaver)
-            POST("/kakao", accept(APPLICATION_JSON), authHandler::signInKakako)
+            GET("/me", userHandler::getUserInfo)
+            POST("/github", accept(APPLICATION_JSON), userHandler::getUserInfo)
+            POST("/naver", accept(APPLICATION_JSON), userHandler::getUserInfo)
+            POST("/kakao", accept(APPLICATION_JSON), userHandler::getUserInfo)
         }
     }
 

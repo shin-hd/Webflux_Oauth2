@@ -1,5 +1,6 @@
 package com.randompicker.pobaba.service.impl
 
+import com.randompicker.pobaba.data.dto.UserResponseDto
 import com.randompicker.pobaba.data.repository.UserRepository
 import com.randompicker.pobaba.service.UserDetailsService
 import org.bson.types.ObjectId
@@ -18,6 +19,10 @@ class UserDetailsServiceImpl(
 
     override fun loadUserByUsername(username: String): Mono<UserDetails> {
         return userRepository.findById(ObjectId(username)).cast(UserDetails::class.java)
+    }
+
+    override fun getUserInfoById(id: String): Mono<UserResponseDto> {
+        return userRepository.findById(ObjectId(id)).map(UserResponseDto::fromEntity)
     }
 
 }
