@@ -3,14 +3,34 @@ import { Helmet } from "react-helmet-async";
 import "@fontsource/roboto/700.css";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
+import { deleteToken } from "./../lib/api/client";
+
+interface UserInfo {
+  id: string;
+  email?: string;
+  name: string;
+  picture?: string;
+  oauthId: string;
+  type: "NORMAL" | "GITHUB" | "GOOGLE" | "KAKAO" | "NAVER";
+  roles: Array<string>;
+  locked: boolean;
+}
 
 interface HeaderProps {
   title: string;
-  login?: boolean;
+  loading?: boolean;
   back?: boolean;
+  userInfo?: UserInfo | null;
+  setUserInfo?: Function;
 }
 
-const Header = ({ title, login, back }: HeaderProps) => {
+const Header = ({
+  title,
+  loading,
+  back,
+  userInfo,
+  setUserInfo,
+}: HeaderProps) => {
   const navigate = useNavigate();
   return (
     <>
@@ -51,7 +71,21 @@ const Header = ({ title, login, back }: HeaderProps) => {
           </Typography>
         </div>
         <div className="grid basis-1/4 content-center justify-center">
-          {login && (
+          {!loading && userInfo ? (
+            <div>
+              <img src={userInfo.picture} alt="" />
+              <span>{userInfo.name}</span>
+              <Button
+                size="small"
+                onClick={() => {
+                  deleteToken();
+                  setUserInfo && setUserInfo(null);
+                }}
+              >
+                로그아웃
+              </Button>
+            </div>
+          ) : (
             <Button size="small" onClick={() => navigate("/login")}>
               로그인
             </Button>

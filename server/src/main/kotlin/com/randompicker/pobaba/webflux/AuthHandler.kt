@@ -1,7 +1,6 @@
 package com.randompicker.pobaba.webflux
 
-import com.randompicker.pobaba.data.dto.SignInWithCodeDto
-import com.randompicker.pobaba.data.dto.SignInWithTokenDto
+import com.randompicker.pobaba.data.dto.SignInDto
 import com.randompicker.pobaba.service.AuthService
 import kotlinx.coroutines.reactor.awaitSingle
 import org.slf4j.Logger
@@ -20,10 +19,10 @@ class AuthHandler(
     private val logger: Logger = LoggerFactory.getLogger(AuthHandler::class.java);
 
     suspend fun signInGoogle(req: ServerRequest): ServerResponse {
-        val signInWithTokenDto = req.awaitBodyOrNull<SignInWithTokenDto>()
+        val signInDto = req.awaitBodyOrNull<SignInDto>()
         logger.info("구글 로그인 요청.")
         
-        val signInResultDto = signInWithTokenDto?.let {
+        val signInResultDto = signInDto?.let {
             authService.signInGoogle(it).awaitSingle()
         }
         
@@ -32,10 +31,10 @@ class AuthHandler(
     }
 
     suspend fun signInGithub(req: ServerRequest): ServerResponse {
-        val signInWithCodeDto = req.awaitBodyOrNull<SignInWithCodeDto>()
+        val signInDto = req.awaitBodyOrNull<SignInDto>()
         logger.info("깃허브 로그인 요청.")
 
-        val signInResultDto = signInWithCodeDto?.let {
+        val signInResultDto = signInDto?.let {
             authService.signInGithub(it).awaitSingle()
         }
 
@@ -44,10 +43,10 @@ class AuthHandler(
     }
 
     suspend fun signInNaver(req: ServerRequest): ServerResponse {
-        val signInWithTokenDto = req.awaitBodyOrNull<SignInWithTokenDto>()
+        val signInDto = req.awaitBodyOrNull<SignInDto>()
         logger.info("네이버 로그인 요청.")
 
-        val signInResultDto = signInWithTokenDto?.let {
+        val signInResultDto = signInDto?.let {
             authService.signInNaver(it).awaitSingle()
         }
 
@@ -56,10 +55,10 @@ class AuthHandler(
     }
 
     suspend fun signInKakako(req: ServerRequest): ServerResponse {
-        val signInWithTokenDto = req.awaitBodyOrNull<SignInWithTokenDto>()
+        val signInDto = req.awaitBodyOrNull<SignInDto>()
         logger.info("카카오 로그인 요청.")
 
-        val signInResultDto = signInWithTokenDto?.let {
+        val signInResultDto = signInDto?.let {
             authService.signInKakao(it).awaitSingle()
         }
 

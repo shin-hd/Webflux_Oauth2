@@ -13,9 +13,10 @@ export interface loginResponse {
 
 const handleResponse = (res: loginResponse) => {
   console.log(res);
-  if (res.status === 200) {
-    window.localStorage.setItem("token", res.data?.token ?? "none");
-    setToken();
+  const token = res.data?.token;
+  if (res.status === 200 && token) {
+    localStorage.setItem("token", token);
+    setToken(token);
   } else if (res.status === 400) {
     alert(
       "토큰 인증 과정에서 문제가 발생했습니다. 로그인 정보를 다시 확인해 주세요."

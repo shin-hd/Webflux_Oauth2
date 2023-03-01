@@ -1,8 +1,8 @@
 import Header from "components/Header";
-import LoginGoogle from "components/LoginGoogle";
-import LoginNaver from "components/LoginNaver";
-import LoginKakao from "./../components/LoginKakao";
-import LoginGithub from "./../components/LoginGithub";
+import LoginGoogle from "components/auth/LoginGoogle";
+import LoginNaver from "components/auth/LoginNaver";
+import LoginKakao from "components/auth/LoginKakao";
+import LoginGithub from "components/auth/LoginGithub";
 
 const Login = () => {
   return (

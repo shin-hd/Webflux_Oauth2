@@ -1,5 +1,5 @@
+import { googleSrcWithClientId } from "lib/login/googleUtils";
 import { Link } from "react-router-dom";
-import { googleSrcWithClientId } from "../lib/login/googleUtils";
 
 const LoginGoogle = () => {
   return (

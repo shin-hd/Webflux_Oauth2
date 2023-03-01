@@ -10,8 +10,6 @@ import com.randompicker.pobaba.data.dto.oauth2.NaverResultDto
 import com.randompicker.pobaba.data.entity.User
 import com.randompicker.pobaba.data.repository.UserRepository
 import com.randompicker.pobaba.service.AuthService
-import kotlinx.coroutines.reactor.awaitSingle
-import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -19,7 +17,6 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.BodyInserters.fromFormData
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
@@ -38,15 +35,15 @@ class AuthServiceImpl(
 
     private val logger: Logger = LoggerFactory.getLogger(AuthServiceImpl::class.java)
 
-    override fun signInGoogle(tokenDto: SignInWithTokenDto): Mono<SignInResultDto> {
+    override fun signInGoogle(signInDto: SignInDto): Mono<SignInResultDto> {
         val client: WebClient = webClient.mutate().baseUrl(googleUserInfoUri).build()
 
         return client.get().uri {
             it.queryParam("personFields", "emailAddresses,names,photos").build()
         }.accept(MediaType.APPLICATION_JSON)
-            .headers {it.setBearerAuth(tokenDto.access_token) }.retrieve()
+            .headers {it.setBearerAuth(signInDto.access_token) }.retrieve()
             .onStatus({ it.is4xxClientError }) {
-                logger.info("잘못된 액세스 토큰. access_token : ${tokenDto.access_token}")
+                logger.info("잘못된 액세스 토큰. access_token : ${signInDto.access_token}")
                 Mono.error(IllegalArgumentException("Invalid access token received."))
             }
             .onStatus({ it.is5xxServerError }) {
@@ -70,7 +67,7 @@ class AuthServiceImpl(
             }
     }
 
-    override fun signInGithub(codeDto: SignInWithCodeDto): Mono<SignInResultDto> {
+    override fun signInGithub(signInDto: SignInDto): Mono<SignInResultDto> {
         val client: WebClient = webClient.mutate().build()
 
         return client.post().uri(githubUserInfoUri)
@@ -78,26 +75,26 @@ class AuthServiceImpl(
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 fromFormData("client_id", githubClientId).with("client_secret", githubClientSecret)
-                    .with("code", codeDto.code)
+                    .with("code", signInDto.access_token)
             ).retrieve()
             .onStatus({ it.is4xxClientError }) {
-                logger.info("잘못된 코드. code : ${codeDto.code}")
+                logger.info("잘못된 코드. code : ${signInDto.access_token}")
                 Mono.error(IllegalArgumentException("Invalid access token received."))
             }
             .onStatus({ it.is5xxServerError }) {
                 logger.info("리소스 서버 에러.")
                 Mono.error(RuntimeException("Resource server error."))
             }
-            .bodyToMono<SignInWithTokenDto>()
+            .bodyToMono<SignInDto>()
 
-            .flatMap { signInWithTokenDto ->
+            .flatMap { signInDtoFromGithub ->
                 client.get().uri("https://api.github.com/user")
                     .headers {
                     it.add("Accept", "application/vnd.github+json")
-                    it.setBearerAuth(signInWithTokenDto.access_token)
+                    it.setBearerAuth(signInDtoFromGithub.access_token)
                 }.retrieve()
                     .onStatus({ it.is4xxClientError }) {
-                        logger.info("잘못된 액세스 토큰. access_token : ${signInWithTokenDto.access_token}")
+                        logger.info("잘못된 액세스 토큰. access_token : ${signInDtoFromGithub.access_token}")
                         Mono.error(IllegalArgumentException("Invalid access token received."))
                     }
                     .onStatus({ it.is5xxServerError }) {
@@ -120,7 +117,7 @@ class AuthServiceImpl(
             }
     }
 
-    override fun signInNaver(tokenDto: SignInWithTokenDto): Mono<SignInResultDto> {
+    override fun signInNaver(tokenDto: SignInDto): Mono<SignInResultDto> {
         val client: WebClient = webClient.mutate().baseUrl(naverUserInfoUri).build()
 
         return client.get().accept(MediaType.APPLICATION_JSON).headers {
@@ -150,7 +147,7 @@ class AuthServiceImpl(
             }
     }
 
-    override fun signInKakao(tokenDto: SignInWithTokenDto): Mono<SignInResultDto> {
+    override fun signInKakao(tokenDto: SignInDto): Mono<SignInResultDto> {
         val client: WebClient = webClient.mutate().baseUrl(kakaoUserInfoUri).build()
 
         return client.get().accept(MediaType.APPLICATION_JSON).headers {

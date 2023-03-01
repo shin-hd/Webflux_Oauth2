@@ -1,6 +1,6 @@
 package com.randompicker.pobaba.data.dto
 
-data class SignInWithTokenDto(
+data class SignInDto(
     val access_token: String
 ) {
 }
