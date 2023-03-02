@@ -1,6 +1,7 @@
 package com.randompicker.pobaba.config.security
 
 import com.randompicker.pobaba.common.exception.InvalidTokenException
+import com.randompicker.pobaba.common.exception.TokenNotFoundException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextImpl
@@ -20,7 +21,10 @@ class SecurityContextRepository(
 
     override fun load(exchange: ServerWebExchange?): Mono<SecurityContext> {
         val token = exchange?.request?.headers?.getFirst("X-AUTH-TOKEN").orEmpty()
-            .let { UsernamePasswordAuthenticationToken(it, it) }
+            .let {
+                if (it.isBlank()) throw TokenNotFoundException("로그인이 필요합니다.");
+                UsernamePasswordAuthenticationToken(it, it)
+            }
 
         return this.authenticationManager.authenticate(token).onErrorResume {
             Mono.error(InvalidTokenException("유효하지 않은 인증 토큰입니다."))

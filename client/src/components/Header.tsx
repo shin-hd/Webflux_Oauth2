@@ -3,35 +3,20 @@ import { Helmet } from "react-helmet-async";
 import "@fontsource/roboto/700.css";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
-import { deleteToken } from "./../lib/api/client";
-
-interface UserInfo {
-  id: string;
-  email?: string;
-  name: string;
-  picture?: string;
-  oauthId: string;
-  type: "NORMAL" | "GITHUB" | "GOOGLE" | "KAKAO" | "NAVER";
-  roles: Array<string>;
-  locked: boolean;
-}
+import { UserProfile } from "lib/api/users";
+import { useEffect } from "react";
 
 interface HeaderProps {
   title: string;
   loading?: boolean;
   back?: boolean;
-  userInfo?: UserInfo | null;
-  setUserInfo?: Function;
+  profile?: UserProfile | null;
+  onLogout?: Function;
 }
 
-const Header = ({
-  title,
-  loading,
-  back,
-  userInfo,
-  setUserInfo,
-}: HeaderProps) => {
+const Header = ({ title, loading, back, profile, onLogout }: HeaderProps) => {
   const navigate = useNavigate();
+
   return (
     <>
       <Helmet>
@@ -71,17 +56,11 @@ const Header = ({
           </Typography>
         </div>
         <div className="grid basis-1/4 content-center justify-center">
-          {!loading && userInfo ? (
-            <div>
-              <img src={userInfo.picture} alt="" />
-              <span>{userInfo.name}</span>
-              <Button
-                size="small"
-                onClick={() => {
-                  deleteToken();
-                  setUserInfo && setUserInfo(null);
-                }}
-              >
+          {!loading && profile ? (
+            <div className="flex flex-row space-x-1 items-center">
+              <img className="w-8 rounded-full" src={profile.picture} alt="" />
+              <span>{profile.name}</span>
+              <Button size="small" onClick={() => onLogout && onLogout()}>
                 로그아웃
               </Button>
             </div>

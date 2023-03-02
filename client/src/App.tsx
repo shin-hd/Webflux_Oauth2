@@ -2,7 +2,7 @@ import NotFound from "pages/NotFound";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Auth from "./components/auth/Auth";
+import Auth from "./pages/Auth";
 
 const App = () => {
   return (

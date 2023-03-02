@@ -1,5 +1,10 @@
 import { AnyAction } from "redux";
-import { getType, AsyncActionCreatorBuilder } from "typesafe-actions";
+import {
+  getType,
+  AsyncActionCreatorBuilder,
+  EmptyActionCreator,
+  PayloadActionCreator,
+} from "typesafe-actions";
 
 export type AsyncState<T, E = any> = {
   data: T | null;
@@ -64,6 +69,50 @@ export const createAsyncReducer =
   };
 
 export const transformToArray = <AC extends AnyAsyncActionCreator>(
+  asyncActionCreator: AC
+) => {
+  const { request, success, failure } = asyncActionCreator;
+  return [request, success, failure];
+};
+
+type EmptyAsyncActionCreator = {
+  request: EmptyActionCreator<any>;
+  success: PayloadActionCreator<any, any>;
+  failure: PayloadActionCreator<any, any>;
+};
+export const createEmptyAsyncReducer =
+  <S, AC extends EmptyAsyncActionCreator, K extends keyof S>(
+    asyncActionCreator: AC,
+    key: K
+  ) =>
+  (state: S, action: AnyAction) => {
+    const [request, success, failure] = [
+      asyncActionCreator.request,
+      asyncActionCreator.success,
+      asyncActionCreator.failure,
+    ].map(getType);
+    switch (action.type) {
+      case request:
+        return {
+          ...state,
+          [key]: asyncState.load(),
+        };
+      case success:
+        return {
+          ...state,
+          [key]: asyncState.success(action.payload),
+        };
+      case failure:
+        return {
+          ...state,
+          [key]: asyncState.error(action.payload),
+        };
+      default:
+        return state;
+    }
+  };
+
+export const transformEmptyToArray = <AC extends EmptyAsyncActionCreator>(
   asyncActionCreator: AC
 ) => {
   const { request, success, failure } = asyncActionCreator;

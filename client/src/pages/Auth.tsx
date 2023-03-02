@@ -5,14 +5,13 @@ import { From, LoginParams } from "lib/api/auth";
 import { RootState } from "modules";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAsync } from "modules/auth";
+import { setToken } from "lib/api/client";
 
 const Auth = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state.auth.loginResult
-  );
+  const { data } = useSelector((state: RootState) => state.auth.loginResult);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -33,6 +32,7 @@ const Auth = () => {
   useEffect(() => {
     if (data?.success && data?.token) {
       localStorage.setItem("token", data.token);
+      setToken(data.token);
       navigate("/");
     }
   }, [data, navigate]);
