@@ -4,7 +4,6 @@ import "@fontsource/roboto/700.css";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { UserProfile } from "lib/api/users";
-import { useEffect } from "react";
 
 interface HeaderProps {
   title: string;

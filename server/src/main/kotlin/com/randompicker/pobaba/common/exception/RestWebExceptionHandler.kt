@@ -17,7 +17,7 @@ class RestWebExceptionHandler : WebExceptionHandler {
 
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
         return when (ex) {
-            is InvalidTokenException, is TokenNotFoundException -> {
+            is InvalidTokenException -> {
                 exchange.response.statusCode = HttpStatus.UNAUTHORIZED
                 exchange.response.headers.contentType = MediaType.APPLICATION_JSON
                 val bytes = JSONObject(getErrorAttributes(ex, HttpStatus.UNAUTHORIZED)).toString().toByteArray()

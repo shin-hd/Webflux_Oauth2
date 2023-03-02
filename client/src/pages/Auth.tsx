@@ -11,7 +11,9 @@ const Auth = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const { data } = useSelector((state: RootState) => state.auth.loginResult);
+  const { data, error } = useSelector(
+    (state: RootState) => state.auth.loginResult
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -33,9 +35,9 @@ const Auth = () => {
     if (data?.success && data?.token) {
       localStorage.setItem("token", data.token);
       setToken(data.token);
-      navigate("/");
     }
-  }, [data, navigate]);
+    (data || error) && navigate("/");
+  }, [data, error, navigate]);
 
   return <></>;
 };
