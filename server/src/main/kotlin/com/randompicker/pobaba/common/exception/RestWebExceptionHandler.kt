@@ -1,5 +1,7 @@
 package com.randompicker.pobaba.common.exception
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.configurationprocessor.json.JSONObject
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
@@ -15,6 +17,7 @@ import reactor.core.publisher.Mono
 @Order(-2)
 class RestWebExceptionHandler : WebExceptionHandler {
 
+    private val logger: Logger = LoggerFactory.getLogger(RestWebExceptionHandler::class.java);
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
         return when (ex) {
             is InvalidTokenException -> {
@@ -32,6 +35,7 @@ class RestWebExceptionHandler : WebExceptionHandler {
                 exchange.response.writeWith(Flux.just(buffer))
             }
             else -> {
+                logger.error("처리되지 않은 예외 발생!! ${ex.message}")
                 exchange.response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
                 exchange.response.setComplete()
             }

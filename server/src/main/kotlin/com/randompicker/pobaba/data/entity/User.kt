@@ -9,6 +9,7 @@ import com.randompicker.pobaba.data.dto.oauth2.KakaoResultDto
 import com.randompicker.pobaba.data.dto.oauth2.NaverResultDto
 import jakarta.validation.constraints.Email
 import org.bson.types.ObjectId
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.MongoId
 import org.springframework.security.core.GrantedAuthority
@@ -24,6 +25,8 @@ class User(
     val type: LoginType = LoginType.NORMAL,
     val roles: List<String> = arrayListOf(),
     val locked: Boolean = false,
+    //@DBRef(lazy = true)
+    val cardList: List<Card> = arrayListOf(),
 ) : UserDetails, BaseEntity() {
 
     @MongoId
@@ -76,7 +79,24 @@ class User(
             oauthId = this.oauthId,
             type = this.type,
             locked = this.locked,
-            roles = this.roles
+            roles = this.roles,
+            cardList = this.cardList
+        )
+        updatedUser.id = this.id
+
+        return updatedUser
+    }
+
+    fun update(cardList: List<Card>): User {
+        val updatedUser = User(
+            email = this.email,
+            name = this.name,
+            picture = this.picture,
+            oauthId = this.oauthId,
+            type = this.type,
+            locked = this.locked,
+            roles = this.roles,
+            cardList = cardList
         )
         updatedUser.id = this.id
 

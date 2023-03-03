@@ -7,13 +7,21 @@ import { UserProfile } from "lib/api/users";
 
 interface HeaderProps {
   title: string;
+  showButton?: boolean;
   loading?: boolean;
   back?: boolean;
   profile?: UserProfile | null;
   onLogout?: Function;
 }
 
-const Header = ({ title, loading, back, profile, onLogout }: HeaderProps) => {
+const Header = ({
+  title,
+  showButton = false,
+  loading,
+  back,
+  profile,
+  onLogout,
+}: HeaderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -54,20 +62,33 @@ const Header = ({ title, loading, back, profile, onLogout }: HeaderProps) => {
             {title}
           </Typography>
         </div>
-        <div className="grid basis-1/4 content-center justify-center">
-          {!loading && profile ? (
-            <div className="flex flex-row space-x-1 items-center">
+        <div className="grid grid-flow-col basis-1/4 min-w-max content-center justify-end px-10 space-x-6">
+          {!loading && profile && (
+            <div className="flex flex-row space-x-2 items-center">
               <img className="w-8 rounded-full" src={profile.picture} alt="" />
               <span>{profile.name}</span>
-              <Button size="small" onClick={() => onLogout && onLogout()}>
+            </div>
+          )}
+          {showButton &&
+            (!loading && profile ? (
+              <Button
+                size="small"
+                variant="outlined"
+                color="secondary"
+                onClick={() => onLogout && onLogout()}
+              >
                 로그아웃
               </Button>
-            </div>
-          ) : (
-            <Button size="small" onClick={() => navigate("/login")}>
-              로그인
-            </Button>
-          )}
+            ) : (
+              <Button
+                size="small"
+                variant="outlined"
+                color="secondary"
+                onClick={() => navigate("/login")}
+              >
+                로그인
+              </Button>
+            ))}
         </div>
       </div>
     </>

@@ -1,6 +1,7 @@
 package com.randompicker.pobaba.config
 
 import com.randompicker.pobaba.webflux.AuthHandler
+import com.randompicker.pobaba.webflux.CardHandler
 import com.randompicker.pobaba.webflux.UserHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,9 +27,14 @@ class RouterConfig: WebFluxConfigurer {
     fun userRouter(userHandler: UserHandler) = coRouter {
         "/api/users".nest {
             GET("/me", userHandler::getUserInfo)
-            POST("/github", accept(APPLICATION_JSON), userHandler::getUserInfo)
-            POST("/naver", accept(APPLICATION_JSON), userHandler::getUserInfo)
-            POST("/kakao", accept(APPLICATION_JSON), userHandler::getUserInfo)
+        }
+    }
+
+    @Bean
+    fun cardRouter(cardHandler: CardHandler) = coRouter {
+        "/api/cards".nest {
+            GET("/once", cardHandler::pickOnce)
+            GET("/ten-times", cardHandler::pickTenTimes)
         }
     }
 
