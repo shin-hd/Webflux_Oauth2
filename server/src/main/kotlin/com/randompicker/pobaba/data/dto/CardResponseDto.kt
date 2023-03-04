@@ -1,6 +1,5 @@
 package com.randompicker.pobaba.data.dto
 
-import com.randompicker.pobaba.common.CommonResponse
 import com.randompicker.pobaba.common.card.CardType
 import com.randompicker.pobaba.data.entity.Card
 

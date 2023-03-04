@@ -3,21 +3,19 @@ import { Helmet } from "react-helmet-async";
 import "@fontsource/roboto/700.css";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
-import { UserProfile } from "lib/api/users";
+import { ProfileState } from "modules/user";
 
 interface HeaderProps {
   title: string;
   showButton?: boolean;
-  loading?: boolean;
   back?: boolean;
-  profile?: UserProfile | null;
+  profile?: ProfileState["profile"] | null;
   onLogout?: Function;
 }
 
 const Header = ({
   title,
   showButton = false,
-  loading,
   back,
   profile,
   onLogout,
@@ -63,14 +61,18 @@ const Header = ({
           </Typography>
         </div>
         <div className="grid grid-flow-col basis-1/4 min-w-max content-center justify-end px-10 space-x-6">
-          {!loading && profile && (
+          {!profile?.loading && profile?.data && (
             <div className="flex flex-row space-x-2 items-center">
-              <img className="w-8 rounded-full" src={profile.picture} alt="" />
-              <span>{profile.name}</span>
+              <img
+                className="w-8 rounded-full"
+                src={profile.data.picture}
+                alt=""
+              />
+              <span>{profile.data.name}</span>
             </div>
           )}
           {showButton &&
-            (!loading && profile ? (
+            (!profile?.loading && profile?.data ? (
               <Button
                 size="small"
                 variant="outlined"

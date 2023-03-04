@@ -8,7 +8,6 @@ open class BaseEntity {
 
     @CreatedDate
     lateinit var createdDate: LocalDateTime
-        private set
 
     @LastModifiedDate
     lateinit var lastModifiedDate: LocalDateTime

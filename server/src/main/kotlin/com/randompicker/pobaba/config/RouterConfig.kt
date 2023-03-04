@@ -33,8 +33,8 @@ class RouterConfig: WebFluxConfigurer {
     @Bean
     fun cardRouter(cardHandler: CardHandler) = coRouter {
         "/api/cards".nest {
-            GET("/once", cardHandler::pickOnce)
-            GET("/ten-times", cardHandler::pickTenTimes)
+            POST("/once", cardHandler::pickOnce)
+            POST("/ten-times", cardHandler::pickTenTimes)
         }
     }
 

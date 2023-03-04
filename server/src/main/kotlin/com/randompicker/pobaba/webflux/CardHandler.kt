@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
+import org.springframework.web.reactive.function.server.ServerResponse.created
 import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.bodyAndAwait
 import org.springframework.web.reactive.function.server.bodyValueAndAwait
@@ -24,15 +25,15 @@ class CardHandler(
 
         val cardResponseDto = cardService.pickOnce(userId).awaitSingle()
 
-        return ok().bodyValueAndAwait(cardResponseDto)
+        return created(req.uri()).bodyValueAndAwait(cardResponseDto)
     }
 
     suspend fun pickTenTimes(req: ServerRequest): ServerResponse {
         val userId = req.principal().awaitSingle().name
 
-        val cardResponseDtos = cardService.pickTenTimes(userId)
+        val cardResponseDtoFlux = cardService.pickTenTimes(userId)
 
-        return ok().body(cardResponseDtos, CardResponseDto::class.java).awaitSingle()
+        return created(req.uri()).body(cardResponseDtoFlux, CardResponseDto::class.java).awaitSingle()
     }
 
 }

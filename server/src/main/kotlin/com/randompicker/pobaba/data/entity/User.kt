@@ -25,7 +25,6 @@ class User(
     val type: LoginType = LoginType.NORMAL,
     val roles: List<String> = arrayListOf(),
     val locked: Boolean = false,
-    //@DBRef(lazy = true)
     val cardList: List<Card> = arrayListOf(),
 ) : UserDetails, BaseEntity() {
 
@@ -83,6 +82,7 @@ class User(
             cardList = this.cardList
         )
         updatedUser.id = this.id
+        updatedUser.createdDate = this.createdDate
 
         return updatedUser
     }
@@ -99,6 +99,7 @@ class User(
             cardList = cardList
         )
         updatedUser.id = this.id
+        updatedUser.createdDate = this.createdDate
 
         return updatedUser
     }

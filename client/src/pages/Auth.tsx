@@ -6,6 +6,7 @@ import { RootState } from "modules";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAsync } from "modules/auth";
 import { setToken } from "lib/api/client";
+import Header from "components/Header";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -39,7 +40,12 @@ const Auth = () => {
     (data || error) && navigate("/");
   }, [data, error, navigate]);
 
-  return <></>;
+  return (
+    <>
+      <Header title="Pobaba" />
+      <div className="absolute left-0 top-16 bottom-0 right-0 bg-slate-100 flex flex-col items-center justify-center -z-10 min-w-[520px]" />
+    </>
+  );
 };
 
 export default Auth;
